@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+   <node pkg="mybot_control"
+   		 name="detect_red_ball" 
+         type="detect_red_ball"
+         required="true" 
+         output="screen" />
+
+   <node pkg="mybot_control"
+         name="navigate" 
+         type="navigate"
+         required="true" 
+         output="screen" />
+
+</launch>
+
