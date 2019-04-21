@@ -10,6 +10,7 @@ from sensor_msgs.msg import LaserScan
 from math import fabs
 
 min_dist_ball = 1
+min_dist_wall = 1
 
 class Navigator():
     def __init__(self):
@@ -19,16 +20,16 @@ class Navigator():
         self.scan_sub = rospy.Subscriber('/mybot/laser/scan', LaserScan, self.scan_callback)
 
         self.status = "init"
+        self.substatus = "unknown"
         self.delta_angle = None
         self.see_red = False
-        self.saw_red = False
         self.covered = False
         self.scan = None
         self.view = {
                 'right': float('Inf'),
                 'fright': float('Inf'),
                 'front_narrow': float('Inf'),
-                'front_wide': float('Inf'),
+                'front': float('Inf'),
                 'fleft': float('Inf'),
                 'left': float('Inf')
         }
@@ -39,20 +40,41 @@ class Navigator():
 
     def see_red_callback(self, data):
         self.see_red = data.data
-        if self.see_red:
-            self.saw_red = True
 
     def scan_callback(self, data):
         self.scan = data
         if self.scan is not None:
+            self.view['right'] = min(self.scan.ranges[0:144])
+            self.view['fright'] = min(self.scan.ranges[145:288])
             self.view["front_narrow"] = min(self.scan.ranges[345:375])
-            '''
-            self.view['right'] = min(self.scan.ranges[270:306])
-            self.view['fright'] = min(self.scan.ranges[306:342])
-            self.view['front'] = min(self.scan.ranges[342:360]+self.scan.ranges[0:18])
-            self.view['fleft'] = min(self.scan.ranges[18:54])
-            self.view['left'] = min(self.scan.ranges[54:90])
-            '''
+            self.view['front'] = min(self.scan.ranges[288:432])
+            self.view['fleft'] = min(self.scan.ranges[423:576])
+            self.view['left'] = min(self.scan.ranges[576:720])
+            if self.status == "searching":
+                self.update_substatus_when_searching()
+
+    def update_substatus_when_searching(self):
+        if self.view['fleft'] <= min_dist_wall and self.view['fright'] <= min_dist_wall and self.view['front'] <= min_dist_wall:
+            self.change_substatus("turning right")
+        elif self.view['fleft'] > min_dist_wall and self.view['fright'] <= min_dist_wall and self.view['front'] <= min_dist_wall:
+            self.change_substatus("turning right")
+        elif self.view['fleft'] <= min_dist_wall and self.view['fright'] > min_dist_wall and self.view['front'] <= min_dist_wall:
+            self.change_substatus("turning right")
+        elif self.view['fleft'] <= min_dist_wall and self.view['fright'] <= min_dist_wall and self.view['front'] > min_dist_wall:
+            self.change_substatus("forwarding")
+        elif self.view['fleft'] <= min_dist_wall and self.view['fright'] > min_dist_wall and self.view['front'] > min_dist_wall:
+            self.change_substatus("following")
+        elif self.view['fleft'] > min_dist_wall and self.view['fright'] <= min_dist_wall and self.view['front'] > min_dist_wall:
+            self.change_substatus("turning right")
+        elif self.view['fleft']> min_dist_wall and self.view['fright'] > min_dist_wall and self.view['front'] <= min_dist_wall:
+            self.change_substatus("turning right")
+        elif self.view['fleft'] > min_dist_wall and self.view['fright'] > min_dist_wall and self.view['front'] > min_dist_wall:
+            if self.substatus == "unknown" or self.substatus == "initial forwarding":
+                self.change_substatus("initial forwarding")
+            else:
+                self.change_substatus("forwarding")
+        else:
+            print "searching update function detected unknown status"
 
     def command_bot(self, lx, ly, lz, ax, ay, az):
         twist = Twist()
@@ -67,6 +89,13 @@ class Navigator():
                 print info
             self.status = input_status
 
+    def change_substatus(self, input_substatus, info=None):
+         if input_substatus != self.substatus:
+            print "current sub: ", self.substatus, "   next sub: ", input_substatus
+            if info is not None:
+                print info
+            self.substatus = input_substatus
+
     def init(self):
         if self.covered:
             self.change_status("terminated")
@@ -77,9 +106,33 @@ class Navigator():
         if self.see_red:
             print "see red"
             self.change_status("moving_to_red")
+        elif self.covered:
+            self.change_status("terminated")
         else:
-            print "cannot see red"
-            self.command_bot(0.3, 0, 0, 0, 0, 0)
+            if self.substatus == "unknown":
+                return
+            elif self.substatus == "initial forwarding":
+                self.initial_forward_search()
+            elif self.substatus == "forwarding":
+                self.forward_search()
+            elif self.substatus == "turning right":
+                self.turn_right_search()
+            elif self.substatus == "following":
+                self.follow_search()
+            else:
+                print("known sub status under searching")
+
+    def initial_forward_search(self):
+        self.command_bot(1, 0, 0, 0, 0, 0)
+
+    def forward_search(self):
+        self.command_bot(0.5, 0, 0, 0, 0, 0.5)
+
+    def turn_right_search(self):
+        self.command_bot(0, 0, 0, 0, 0, -0.8)
+
+    def follow_search(self):
+        self.command_bot(0.5, 0, 0, 0, 0, 0)
 
     def move_to_red(self):
         if fabs(self.delta_angle) > 5 and self.view["front_narrow"] > min_dist_ball:
@@ -94,7 +147,7 @@ class Navigator():
         else:
             linear = 0
             angular = 0
-            self.change_status("terminated")
+            self.change_status("terminated")  ## in the future need to change to grabbing
         self.command_bot(linear, 0, 0, 0, 0, angular)
 
     def grab(self):
