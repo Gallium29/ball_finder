@@ -1,0 +1,563 @@
+<?xml version="1.0" ?>
+<robot name="turtlebot3_waffle" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find ballbot)/robot_model/common_properties.xacro"/>
+  <xacro:include filename="$(find ballbot)/robot_model/bot.gazebo.xacro"/>
+
+  <xacro:property name="base_mass" value= "10" />
+  <xacro:property name="wheel_mass" value= "4" />
+  <xacro:property name="default_mass" value= "0.0001" />
+
+
+   <xacro:property name="base_x" value= "0.6" />
+   <xacro:property name="base_y" value="0.6" />
+   <xacro:property name="base_z" value="0.03" />
+
+  <xacro:property name="castor_x" value="0.05" />
+   <xacro:property name="castor_y" value="${wheel_rad - base_z}" />
+   <xacro:property name="castor_z" value="0.05" />
+
+   <xacro:property name="wheel_rad" value="0.1" />
+   <xacro:property name="wheel_len" value="0.06" />
+
+   
+   <xacro:property name="arm_base_x" value="${bucket_depth - 0.05}" />
+   <xacro:property name="arm_base_y" value="0.05" />
+   <xacro:property name="arm_base_z" value="0.08" />
+
+   <xacro:property name="slider_x" value= "${arm_base_z}" />
+   <xacro:property name="slider_y" value="${arm_base_y}" />
+   <xacro:property name="slider_z" value="0.4" />
+
+  <xacro:property name="arm_x" value="1.0" />
+   <xacro:property name="arm_y" value="0.05" />
+   <xacro:property name="arm_z" value="0.08" />
+
+   <xacro:property name="bucket_depth" value="0.45" />
+
+   <xacro:property name="bucket_base_x" value="0.05" />
+   <xacro:property name="bucket_base_y" value="0.5" />
+   <xacro:property name="bucket_base_z" value="0.5" />
+
+  <xacro:property name="bucket_long_wall_x" value= "${bucket_base_y}" />
+   <xacro:property name="bucket_long_wall_y" value="0.05" />
+   <xacro:property name="bucket_long_wall_z" value="${bucket_depth}" />
+
+  <xacro:property name="bucket_lat_wall_x" value= "0.05" />
+   <xacro:property name="bucket_lat_wall_y" value="${bucket_base_y}" />
+   <xacro:property name="bucket_lat_wall_z" value="${bucket_depth}" />
+
+  <xacro:property name="ball_holder_x" value="0.01" />
+   <xacro:property name="ball_holder_y" value="${bucket_lat_wall_y}" />
+   <xacro:property name="ball_holder_z" value="${bucket_lat_wall_x}" />
+
+
+  <xacro:property name="arm_origin" value="0 0 0" />
+  <xacro:property name="bucket_base_dim" value="0.05 0.6 0.6" />
+
+
+  <link name="base_footprint"/>
+
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link" />
+    <origin xyz="0 0 0.010" rpy="0 0 0"/>
+  </joint>
+
+  <link name="base_link">
+    <visual>
+      <origin xyz="-0.064 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${base_x} ${base_y} ${base_z}"/>
+      </geometry>
+      <material name="light_black"/>
+    </visual>
+
+    <collision>
+      <origin xyz="-0.064 0 0.047" rpy="0 0 0"/>
+      <geometry>
+        <box size="${base_x} ${base_y} ${base_z}"/>
+      </geometry>
+    </collision>
+    
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="${base_mass}"/>
+      <inertia ixx="8.7002718e-02" ixy="-4.7576583e-04" ixz="1.1160499e-03"
+               iyy="8.6195418e-02" iyz="-3.5422299e-05"
+               izz="1.4612727e-01" />
+    </inertial>
+  </link>
+
+<!-- **************arm_base********* -->
+ <joint name="base_to_arm_base" type="fixed">
+    <parent link="base_link"/>
+    <child link="arm_base"/>
+    <origin xyz="0 ${base_y*0.1} ${base_z*0.5 + arm_base_x*0.5}" rpy="0 -1.57 0"/>
+  </joint>
+ <link name="arm_base">
+    <visual>
+      <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${arm_base_x} ${arm_base_y} ${arm_base_z}"/>
+      </geometry>
+      <material name="light_black"/>
+    </visual>
+
+    <collision>
+      <origin xyz="-0.064 0 0.047" rpy="0 1.57 0"/>
+      <geometry>
+        <box size="${arm_base_x} ${arm_base_y} ${arm_base_z}"/>
+      </geometry>
+    </collision>
+    
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="${default_mass}"/>
+      <inertia ixx="8.7002718e-03" ixy="-4.7576583e-05" ixz="1.1160499e-04"
+               iyy="8.6195418e-03" iyz="-3.5422299e-06"
+               izz="1.4612727e-02" />
+    </inertial>
+  </link>
+
+
+<!-- **************slider********* -->
+<joint name="arm_base_to_slider" type="prismatic">
+    <parent link="arm_base"/>
+    <child link="slider"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="${-slider_z}" upper="0" velocity="0.5"/>
+    <origin xyz="${arm_base_x*0.5 + slider_z} ${arm_base_y*0.5 + arm_y*0.5} 0" rpy="0 1.57 0"/>
+  </joint>
+
+ <link name="slider">
+    <visual>
+      <origin xyz="0 0 ${-slider_z*0.5}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${slider_x} ${slider_y} ${slider_z}"/>
+      </geometry>
+      <material name="light_black"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 ${-slider_z*0.5}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${slider_x} ${slider_y} ${slider_z}"/>
+      </geometry>
+    </collision>
+    
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="${default_mass}"/>
+      <inertia ixx="8.7002718e-03" ixy="-4.7576583e-05" ixz="1.1160499e-04"
+               iyy="8.6195418e-03" iyz="-3.5422299e-06"
+               izz="1.4612727e-02" />
+    </inertial>
+  </link>
+
+<transmission name="slider_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="slider_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="arm_base_to_slider">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+<!-- **************arm********* -->
+ <joint name="slider_to_arm" type="revolute">
+    <parent link="slider"/>
+    <child link="arm"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="1000.0" lower="-1.57" upper="0" velocity="0.5"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+ <link name="arm">
+    <visual>
+      <origin xyz="${arm_x*0.5} 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${arm_x} ${arm_y} ${arm_z}"/>
+      </geometry>
+      <material name="light_black"/>
+    </visual>
+
+    <collision>
+      <origin xyz="-0.064 0 0.047" rpy="0 1.57 0"/>
+      <geometry>
+        <box size="${arm_x} ${arm_y} ${arm_z}"/>
+      </geometry>
+    </collision>
+    
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="${default_mass}"/>
+      <inertia ixx="8.7002718e-03" ixy="-4.7576583e-05" ixz="1.1160499e-04"
+               iyy="8.6195418e-03" iyz="-3.5422299e-06"
+               izz="1.4612727e-02" />
+    </inertial>
+  </link>
+
+
+<transmission name="arm_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="arm_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="slider_to_arm">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+  
+
+<!-- **************bucket_base********* -->
+ <joint name="arm_to_bucket_base" type="fixed">
+    <parent link="arm"/>
+    <child link="bucket_base"/>
+    <origin xyz="${arm_x} 0 ${-arm_z*0.5 -bucket_base_x*0.5}" rpy="0 -1.57 0"/>
+  </joint>
+ <link name="bucket_base">
+    <visual>
+      <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${bucket_base_x} ${bucket_base_y} ${bucket_base_z}"/>
+      </geometry>
+      <material name="light_black"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${bucket_base_x} ${bucket_base_y} ${bucket_base_z}"/>
+      </geometry>
+    </collision>
+    
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="${default_mass}"/>
+      <inertia ixx="8.7002718e-03" ixy="-4.7576583e-05" ixz="1.1160499e-04"
+               iyy="8.6195418e-03" iyz="-3.5422299e-06"
+               izz="1.4612727e-02" />
+    </inertial>
+  </link>
+
+
+<!-- **************bucket_right_wall********* -->
+ <joint name="bucket_base_to_right_wall" type="fixed">
+    <parent link="bucket_base"/>
+    <child link="bucket_right_wall"/>
+    <origin xyz="${-bucket_long_wall_z*0.5 + bucket_base_x*0.5} ${bucket_base_z*0.5 + bucket_long_wall_y*0.5} 0" rpy="0 -1.57 0"/>
+  </joint>
+ <link name="bucket_right_wall">
+    <visual>
+      <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${bucket_long_wall_x} ${bucket_long_wall_y} ${bucket_long_wall_z}"/>
+      </geometry>
+      <material name="light_black"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${bucket_long_wall_x} ${bucket_long_wall_y} ${bucket_long_wall_z}"/>
+      </geometry>
+    </collision>
+    
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="${default_mass}"/>
+      <inertia ixx="8.7002718e-03" ixy="-4.7576583e-05" ixz="1.1160499e-04"
+               iyy="8.6195418e-03" iyz="-3.5422299e-06"
+               izz="1.4612727e-02" />
+    </inertial>
+  </link>
+
+
+<!-- **************bucket_left_wall********* -->
+ <joint name="bucket_base_to_left_wall" type="fixed">
+    <parent link="bucket_base"/>
+    <child link="bucket_left_wall"/>
+    <origin xyz="${-bucket_long_wall_z*0.5 + bucket_base_x*0.5} ${-bucket_base_z*0.5 - bucket_long_wall_y*0.5} 0" rpy="0 -1.57 0"/>
+  </joint>
+ <link name="bucket_left_wall">
+    <visual>
+      <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${bucket_long_wall_x} ${bucket_long_wall_y} ${bucket_long_wall_z}"/>
+      </geometry>
+      <material name="light_black"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${bucket_long_wall_x} ${bucket_long_wall_y} ${bucket_long_wall_z}"/>
+      </geometry>
+    </collision>
+    
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="${default_mass}"/>
+      <inertia ixx="8.7002718e-03" ixy="-4.7576583e-05" ixz="1.1160499e-04"
+               iyy="8.6195418e-03" iyz="-3.5422299e-06"
+               izz="1.4612727e-02" />
+    </inertial>
+  </link>
+
+
+
+<!-- **************bucket_fornt_wall********* -->
+ <joint name="bucket_base_to_front_wall" type="fixed">
+    <parent link="bucket_base"/>
+    <child link="bucket_front_wall"/>
+    <origin xyz="${-bucket_lat_wall_z*0.5 + bucket_base_x*0.5} 0 ${-bucket_base_z*0.5 - bucket_lat_wall_x*0.5}" rpy="0 -1.57 0"/>
+  </joint>
+ <link name="bucket_front_wall">
+    <visual>
+      <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${bucket_lat_wall_x} ${bucket_lat_wall_y} ${bucket_lat_wall_z}"/>
+      </geometry>
+      <material name="light_black"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${bucket_lat_wall_x} ${bucket_lat_wall_y} ${bucket_lat_wall_z}"/>
+      </geometry>
+    </collision>
+    
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="${default_mass}"/>
+      <inertia ixx="8.7002718e-03" ixy="-4.7576583e-05" ixz="1.1160499e-04"
+               iyy="8.6195418e-03" iyz="-3.5422299e-06"
+               izz="1.4612727e-02" />
+    </inertial>
+  </link>
+
+<!-- **************bucket_back_wall********* -->
+ <joint name="bucket_base_to_back_wall" type="fixed">
+    <parent link="bucket_base"/>
+    <child link="bucket_back_wall"/>
+    <origin xyz="${-bucket_lat_wall_z*0.5 + bucket_base_x*0.5} 0 ${bucket_base_z*0.5 + bucket_lat_wall_x*0.5}" rpy="0 -1.57 0"/>
+  </joint>
+ <link name="bucket_back_wall">
+    <visual>
+      <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${bucket_lat_wall_x} ${bucket_lat_wall_y} ${bucket_lat_wall_z}"/>
+      </geometry>
+      <material name="light_black"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${bucket_lat_wall_x} ${bucket_lat_wall_y} ${bucket_lat_wall_z}"/>
+      </geometry>
+    </collision>
+    
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="${default_mass}"/>
+      <inertia ixx="8.7002718e-03" ixy="-4.7576583e-05" ixz="1.1160499e-04"
+               iyy="8.6195418e-03" iyz="-3.5422299e-06"
+               izz="1.4612727e-02" />
+    </inertial>
+  </link>
+
+<!-- **************ball_holder********* -->
+ <joint name="back_wall_to_ball_holder" type="revolute">
+    <parent link="bucket_back_wall"/>
+    <child link="ball_holder"/>
+    <origin xyz="${bucket_lat_wall_x*0.5 + ball_holder_x*0.5} ${bucket_lat_wall_y*0.5} ${bucket_lat_wall_z*0.5 + ball_holder_x*0.5}" rpy="0 -1.57 0"/>
+    <axis xyz="1 0 0"/>
+    <limit effort="1000.0" lower="-0.785" upper="0" velocity="0.5"/>
+  </joint>
+ <link name="ball_holder">
+    <visual>
+      <origin xyz="0 ${-ball_holder_y*0.5} 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${ball_holder_x} ${ball_holder_y} ${ball_holder_z}"/>
+      </geometry>
+      <material name="light_black"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 ${-ball_holder_y*0.5} 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${ball_holder_x} ${ball_holder_y} ${ball_holder_z}"/>
+      </geometry>
+    </collision>
+    
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="${default_mass}"/>
+      <inertia ixx="8.7002718e-03" ixy="-4.7576583e-05" ixz="1.1160499e-04"
+               iyy="8.6195418e-03" iyz="-3.5422299e-06"
+               izz="1.4612727e-02" />
+    </inertial>
+  </link>
+
+
+<transmission name="ball_holder_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="holder_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="back_wall_to_ball_holder">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+
+
+
+
+<!-- **************left wheel********* -->
+
+  <joint name="wheel_left_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="wheel_left_link"/>
+    <origin xyz="${base_x*0.3} ${base_y*0.5 + wheel_len*0.5} 0.012" rpy="-1.57 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <link name="wheel_left_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="${wheel_len}" radius="${wheel_rad}"/>
+      </geometry>
+      <material name="dark"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="${wheel_len}" radius="${wheel_rad}"/>
+      </geometry>
+    </collision>
+
+    <inertial>
+      <origin xyz="0 0 0" />
+      <mass value="${wheel_mass}" />
+      <inertia ixx="1.1175580e-05" ixy="-4.2369783e-11" ixz="-5.9381719e-09"
+               iyy="1.1192413e-05" iyz="-1.4400107e-11"
+               izz="2.0712558e-05" />
+      </inertial>
+  </link>
+
+<!-- **************right wheel********* -->
+  <joint name="wheel_right_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="wheel_right_link"/>
+    <origin xyz="${base_x*0.3} ${-base_y*0.5 - wheel_len*0.5} 0.012" rpy="-1.57 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <link name="wheel_right_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="${wheel_len}" radius="${wheel_rad}"/>
+      </geometry>
+      <material name="dark"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="${wheel_len}" radius="${wheel_rad}"/>
+      </geometry>
+    </collision>
+
+    <inertial>
+      <origin xyz="0 0 0" />
+      <mass value="${wheel_mass}" />
+      <inertia ixx="1.1175580e-05" ixy="-4.2369783e-11" ixz="-5.9381719e-09"
+               iyy="1.1192413e-05" iyz="-1.4400107e-11"
+               izz="2.0712558e-05" />
+      </inertial>
+  </link>
+
+
+
+<!-- **************right_castor********* -->
+  <joint name="caster_back_right_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="caster_back_right_link"/>
+    <origin xyz="${-base_x*0.4} ${-base_y*0.4} ${-base_z*0.5 - castor_y*0.5}" rpy="-1.57 0 0"/>
+  </joint>
+
+  <link name="caster_back_right_link">
+   <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${castor_x} ${castor_y} ${castor_z}"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${castor_x} ${castor_y} ${castor_z}"/>
+      </geometry>
+    </collision>
+
+    <inertial>
+      <origin xyz="0 0 0" />
+      <mass value="${default_mass}"/>
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
+               iyy="0.001" iyz="0.0"
+               izz="0.001" />
+    </inertial>
+  </link>
+
+   <!-- **************left_castor********* -->
+  <joint name="caster_back_left_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="caster_back_left_link"/>
+    <origin xyz="${-base_x*0.4} ${base_y*0.4} ${-base_z*0.5 - castor_y*0.5}" rpy="-1.57 0 0"/>
+  </joint>
+
+  <link name="caster_back_left_link">
+ 	<visual>
+      <origin xyz="0 0.001 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${castor_x} ${castor_y} ${castor_z}"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0.001 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.030 0.009 0.020"/>
+      </geometry>
+    </collision>
+
+    <inertial>
+      <origin xyz="0 0 0" />
+      <mass value="${default_mass}"/>
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
+               iyy="0.001" iyz="0.0"
+               izz="0.001" />
+    </inertial>
+  </link>
+
+  <joint name="imu_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="imu_link"/>
+    <origin xyz="0.0 0 0.068" rpy="0 0 0"/>
+  </joint>
+
+  <link name="imu_link"/>
+
+
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/</robotNamespace>
+	<legacyModeNS>true</legacyModeNS>
+    </plugin>
+  </gazebo>
+
+</robot>
