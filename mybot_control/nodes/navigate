@@ -159,10 +159,10 @@ class Navigator():
         else:
             if self.view["front_narrow"] <= min_dist_ball:
                 linear = 0
+                self.change_status("terminated")
             else:
                 linear = min(0.2, self.view["front_narrow"]*0.1)
             angular = 0
-            self.change_status("terminated")
         self.command_bot(linear, 0, 0, 0, 0, angular)
 
 
