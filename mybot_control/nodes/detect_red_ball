@@ -21,6 +21,7 @@ class BallDetector:
         self.image_sub = rospy.Subscriber("/mybot/camera1/image_raw", Image, self.image_callback)
         self.delta_angle_pub = rospy.Publisher('/mybot/delta_angle', Float64, queue_size=1)
         self.see_red_pub = rospy.Publisher('/mybot/see_red', Bool, queue_size=1)
+        self.radius_pub = rospy.Publisher('/mybot/radius', Float64, queue_size=1)
     
     def find_red_circle(self, bgr):
         try:
@@ -44,10 +45,12 @@ class BallDetector:
         bgr = self.bridge.imgmsg_to_cv2(data, "bgr8")
         h, w = bgr.shape[:2]
         circle = self.find_red_circle(bgr)
-        delta_angle = w / 2 - circle[0] if circle is not None else 0
         see_red = True if circle is not None else False
-        self.delta_angle_pub.publish(delta_angle)
+        radius = circle[2] if circle is not None else 0
+        delta_angle = w / 2 - circle[0] if circle is not None else 0
         self.see_red_pub.publish(see_red)
+        self.radius_pub.publish(radius)
+        self.delta_angle_pub.publish(delta_angle)
 
 def main(args):
     rospy.init_node('ball_detector', anonymous=True)
