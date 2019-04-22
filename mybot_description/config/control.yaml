@@ -8,13 +8,13 @@ mybot:
   slider_position_controller:
     type: effort_controllers/JointPositionController
     joint: arm_base_to_slider
-    pid: {p: 1.0, i: 0.01, d: 0.2}
+    pid: {p: 10.0, i: 0.01, d: 0.2}
 
 
   arm_position_controller:
     type: effort_controllers/JointPositionController
     joint: slider_to_arm
-    pid: {p: 1.0, i: 0.01, d: 0.2}
+    pid: {p: 10.0, i: 0.05, d: 1.2}
 
 
   holder_position_controller:

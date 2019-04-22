@@ -19,7 +19,7 @@
   </include>
 
 <arg name="model" default="$(find mybot_description)/urdf/robot_model/bot.urdf.xacro"/>
-  <arg name="x_pos" default="-10.05"/>
+  <arg name="x_pos" default="0.05"/>
   <arg name="y_pos" default="6.5"/>
   <arg name="z_pos" default="0.5"/>
 

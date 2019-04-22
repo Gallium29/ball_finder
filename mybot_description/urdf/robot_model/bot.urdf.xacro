@@ -5,7 +5,7 @@
 
   <xacro:property name="base_mass" value= "6" />
   <xacro:property name="wheel_mass" value= "0.05" />
-  <xacro:property name="default_mass" value= "0.0001" />
+  <xacro:property name="default_mass" value= "0.01" />
 
 
    <xacro:property name="base_x" value= "0.6" />
@@ -28,7 +28,7 @@
    <xacro:property name="slider_y" value="${arm_base_y}" />
    <xacro:property name="slider_z" value="0.4" />
 
-  <xacro:property name="arm_x" value="1.0" />
+  <xacro:property name="arm_x" value="1.2" />
    <xacro:property name="arm_y" value="0.05" />
    <xacro:property name="arm_z" value="0.08" />
 
@@ -110,7 +110,7 @@
     </visual>
 
     <collision>
-      <origin xyz="-0.064 0 0.047" rpy="0 1.57 0"/>
+      <origin xyz="0 0 0.0" rpy="0 0 0"/>
       <geometry>
         <box size="${arm_base_x} ${arm_base_y} ${arm_base_z}"/>
       </geometry>
@@ -131,7 +131,7 @@
     <parent link="arm_base"/>
     <child link="slider"/>
     <axis xyz="0 0 1"/>
-    <limit effort="1000.0" lower="${-slider_z}" upper="0" velocity="0.5"/>
+    <limit effort="100000.0" lower="${-slider_z}" upper="0" velocity="0.5"/>
     <origin xyz="${arm_base_x*0.5 + slider_z} ${arm_base_y*0.5 + arm_y*0.5} 0" rpy="0 1.57 0"/>
   </joint>
 
@@ -190,7 +190,7 @@
     </visual>
 
     <collision>
-      <origin xyz="-0.064 0 0.047" rpy="0 1.57 0"/>
+      <origin xyz="${arm_x*0.5} 0 0.0" rpy="0 0 0"/>
       <geometry>
         <box size="${arm_x} ${arm_y} ${arm_z}"/>
       </geometry>
@@ -597,7 +597,7 @@
   <!-- ******** Hokuyo Laser******* -->
 <joint name="hokuyo_joint" type="fixed">
     <axis xyz="0 1 0" />
-    <origin xyz="${base_x*0.3} 0 ${base_z*0.5 + cameraSize*0.5}" rpy="0 0 0"/>
+    <origin xyz="${base_x*0.4} 0 ${base_z*0.5 + cameraSize*0.5}" rpy="0 0 0"/>
     <parent link="base_link"/>
     <child link="hokuyo"/>
   </joint>
@@ -606,7 +606,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-    <box size="0.1 0.1 0.1"/>
+    <box size="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
