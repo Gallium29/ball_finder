@@ -73,8 +73,6 @@ class Navigator():
                 self.change_substatus("initial forwarding")
             else:
                 self.change_substatus("forwarding")
-        else:
-            print "searching update function detected unknown status"
 
     def command_bot(self, lx, ly, lz, ax, ay, az):
         twist = Twist()
@@ -85,15 +83,11 @@ class Navigator():
     def change_status(self, input_status, info=None):
         if input_status != self.status:
             print "current: ", self.status, "   next: ", input_status
-            if info is not None:
-                print info
             self.status = input_status
 
     def change_substatus(self, input_substatus, info=None):
          if input_substatus != self.substatus:
             print "current sub: ", self.substatus, "   next sub: ", input_substatus
-            if info is not None:
-                print info
             self.substatus = input_substatus
 
     def init(self):
@@ -138,22 +132,24 @@ class Navigator():
         if fabs(self.delta_angle) > 5 and self.view["front_narrow"] > min_dist_ball:
             linear = min(0.5, self.view["front_narrow"]*0.2)
             angular = min(0.5, self.delta_angle*0.01)
+            self.command_bot(linear, 0, 0, 0, 0, angular)
         elif fabs(self.delta_angle) <= 5 and self.view["front_narrow"] > min_dist_ball:
             linear = min(0.5, self.view["front_narrow"]*0.2)
             angular = 0
+            self.command_bot(linear, 0, 0, 0, 0, angular)
         elif fabs(self.delta_angle) > 5 and self.view["front_narrow"] <= min_dist_ball:
             linear = 0
             angular = min(0.5, self.delta_angle*0.01)
+            self.command_bot(linear, 0, 0, 0, 0, angular)
         else:
-            linear = 0
-            angular = 0
-            self.change_status("terminated")  ## in the future need to change to grabbing
-        self.command_bot(linear, 0, 0, 0, 0, angular)
+            self.command_bot(0, 0, 0, 0, 0, 0)
+            self.change_status("retrieving")
 
     def grab(self):
         pass
 
     def retrieve(self):
+        
         pass
 
     def move_to_src(self):

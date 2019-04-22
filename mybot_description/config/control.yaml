@@ -1,0 +1,24 @@
+mybot:
+  # Publish all joint states -----------------------------------
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 50  
+
+  # Position Controllers ---------------------------------------
+  slider_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: arm_base_to_slider
+    pid: {p: 1.0, i: 0.01, d: 0.2}
+
+
+  arm_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: slider_to_arm
+    pid: {p: 1.0, i: 0.01, d: 0.2}
+
+
+  holder_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: back_wall_to_ball_holder
+    pid: {p: 1.0, i: 0.01, d: 0.2}
+

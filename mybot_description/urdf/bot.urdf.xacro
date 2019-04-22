@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <robot name="turtlebot3_waffle" xmlns:xacro="http://ros.org/wiki/xacro">
-  <!--xacro:include filename="$(find mybot_description)/urdf/robot_model/common_properties.xacro"/-->
+  <xacro:include filename="$(find mybot_description)/urdf/robot_model/common_properties.xacro"/>
   <xacro:include filename="$(find mybot_description)/urdf/robot_model/bot.gazebo.xacro"/>
 
   <xacro:property name="base_mass" value= "6" />
