@@ -1,0 +1,63 @@
+<launch>
+  <arg name="model" value="waffle_pi" doc="model type [burger, waffle, waffle_pi]"/>
+  <arg name="initial_pose_x" default="-2.0"/>
+  <arg name="initial_pose_y" default="-1"/>
+  
+  <node pkg="mybot_control"
+       name="detect_red_ball" 
+         type="detect_red_ball"
+         required="true" 
+         output="screen" />
+
+   <node pkg="mybot_control"
+         name="navigate" 
+         type="navigate"
+         required="true" 
+         output="screen" />
+
+
+  <!-- Below are configurations of the navigation stack -->
+
+
+  <!-- Turtlebot3 -->
+  <include file="$(find turtlebot3_bringup)/launch/turtlebot3_remote.launch" />
+
+
+  <!-- Map server -->
+  <arg name="map_file" default="$(find turtlebot3_planning)/turtlebot3_maps/map2.yaml"/>
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)">
+  </node>
+
+
+  <!-- AMCL -->
+  <include file="$(find turtlebot3_planning)/launch/start_localization.launch">
+    <arg name="initial_pose_x" value="$(arg initial_pose_x)" />
+    <arg name="initial_pose_y" value="$(arg initial_pose_y)" />
+  </include>
+
+
+  <!--gazebo-->
+  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world.launch">
+    <arg name="initial_pose_x" value="$(arg initial_pose_x)" />
+    <arg name="initial_pose_y" value="$(arg initial_pose_y)" />
+  </include>
+
+
+  <!-- move_base -->
+  <arg name="cmd_vel_topic" default="/cmd_vel" />
+  <arg name="odom_topic" default="odom" />
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base">
+    <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" />
+
+    <rosparam file="$(find turtlebot3_planning)/param/costmap_common_params_$(arg model).yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find turtlebot3_planning)/param/costmap_common_params_$(arg model).yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find turtlebot3_planning)/param/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find turtlebot3_planning)/param/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find turtlebot3_planning)/param/move_base_params.yaml" command="load" />
+    <rosparam file="$(find turtlebot3_planning)/param/dwa_local_planner_params_$(arg model).yaml" command="load" />
+
+    <remap from="cmd_vel" to="$(arg cmd_vel_topic)"/>
+    <remap from="odom" to="$(arg odom_topic)"/>
+  </node>
+
+</launch>
