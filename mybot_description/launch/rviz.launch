@@ -1,6 +1,6 @@
 <launch>
 
-  <arg name="model" default="$(find mybot_description)/urdf/robot_model/bot.urdf.xacro"/>
+  <arg name="model" default="$(find mybot_description)/urdf/turtlebot/turtlebot3_waffle.urdf.xacro"/>
   <arg name="gui" default="true" />
   <arg name="rvizconfig" default="$(find urdf_tutorial)/rviz/urdf.rviz" />
 

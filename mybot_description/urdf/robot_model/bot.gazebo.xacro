@@ -87,7 +87,7 @@
       <wheelSeparation>0.606</wheelSeparation>
       <wheelDiameter>0.4</wheelDiameter>
       <wheelAcceleration>1</wheelAcceleration>
-      <wheelTorque>1000</wheelTorque>
+      <wheelTorque>10</wheelTorque>
       <rosDebugLevel>na</rosDebugLevel>
     </plugin>
   </gazebo>

@@ -5,20 +5,8 @@ mybot:
     publish_rate: 50  
 
   # Position Controllers ---------------------------------------
-  slider_position_controller:
+  crossbar_position_controller:
     type: effort_controllers/JointPositionController
-    joint: arm_base_to_slider
-    pid: {p: 10.0, i: 0.01, d: 0.2}
-
-
-  arm_position_controller:
-    type: effort_controllers/JointPositionController
-    joint: slider_to_arm
-    pid: {p: 10.0, i: 0.05, d: 1.2}
-
-
-  holder_position_controller:
-    type: effort_controllers/JointPositionController
-    joint: back_wall_to_ball_holder
-    pid: {p: 1.0, i: 0.01, d: 0.2}
+    joint: right_arm_to_crossbar
+    pid: {p: 0.0005, i: 0.008, d: 0.003}
 

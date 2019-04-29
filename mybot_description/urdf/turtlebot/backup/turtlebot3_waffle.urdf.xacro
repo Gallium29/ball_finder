@@ -1,0 +1,413 @@
+<?xml version="1.0" ?>
+<robot name="turtlebot3_waffle" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find mybot_description)/urdf/turtlebot/common_properties.xacro"/>
+  <xacro:include filename="$(find mybot_description)/urdf/turtlebot/turtlebot3_waffle.gazebo.xacro"/>
+
+  <xacro:property name="r200_cam_rgb_px" value="0.005"/>
+  <xacro:property name="r200_cam_rgb_py" value="0.018"/>
+  <xacro:property name="r200_cam_rgb_pz" value="0.013"/>
+  <xacro:property name="r200_cam_depth_offset" value="0.01"/>
+
+
+   <xacro:property name="base_x" value= "0.266" />
+   <xacro:property name="base_y" value="0.266" />
+   <xacro:property name="base_z" value="0.094" />
+   <xacro:property name="wheel_from_base" value="0.064" />
+   <xacro:property name="wheel_rad" value="0.033" />
+   <xacro:property name="wheel_len" value="0.018" />
+   <xacro:property name="castor_height" value="0.01" />
+
+   <xacro:property name="arm_mount_height" value="0.05" />
+   <xacro:property name="arm_len" value="0.6" />
+   <xacro:property name="arm_width" value="0.05" />
+   <xacro:property name="arm_thick" value="0.02" />
+   <xacro:property name="arm_dist" value="0.5" />
+   <xacro:property name="camera_size" value="${arm_width*0.8}"/>
+
+
+   <xacro:property name="default_mas" value="0.005" />
+
+
+  <link name="base_footprint"/>
+
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link" />
+    <origin xyz="0 0 0.010" rpy="0 0 0"/>
+  </joint>
+
+  <link name="base_link">
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+             <box size="${base_x} ${base_y} ${base_z}"/>
+      </geometry>
+      <material name="light_black"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0.0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${base_x} ${base_y} ${base_z}"/>
+      </geometry>
+    </collision>
+    
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="6.0"/>
+      <inertia ixx="8.7002718e-03" ixy="-4.7576583e-05" ixz="1.1160499e-04"
+               iyy="8.6195418e-01" iyz="-3.5422299e-06"
+               izz="6.4612727e-01" />
+    </inertial>
+  </link>
+
+<!-- ********right arm***********-->
+<joint name="base_to_right_arm" type="fixed">
+    <parent link="base_link"/>
+    <child link="right_arm"/>
+    <origin xyz="${-base_x*0.45} ${arm_dist*0.5} ${arm_mount_height}" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <link name="right_arm">
+    <visual>
+      <origin xyz="${-arm_len*0.5} 0 0" rpy="0 0 0"/>
+      <geometry>
+	<box size="${arm_len} ${arm_thick} ${arm_width}"/>
+      </geometry>
+      <material name="dark"/>
+    </visual>
+
+     <collision>
+      <origin xyz="${-arm_len*0.5} 0 0" rpy="0 0 0"/>
+      <geometry>
+	<box size="${arm_len} ${arm_thick} ${arm_width}"/>
+      </geometry>
+    </collision>
+
+    <inertial>
+      <mass value="${default_mas}" />
+      <inertia ixx="1.1175580e-05" ixy="-4.2369783e-11" ixz="-5.9381719e-09"
+               iyy="1.1192413e-05" iyz="-1.4400107e-11"
+               izz="2.0712558e-05" />
+      </inertial>
+  </link>
+
+<!--********left arm*******-->
+<joint name="base_to_left_arm" type="fixed">
+    <parent link="base_link"/>
+    <child link="left_arm"/>
+    <origin xyz="${-base_x*0.45} ${-arm_dist*0.5} ${arm_mount_height}" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <link name="left_arm">
+    <visual>
+      <origin xyz="${-arm_len*0.5} 0 0" rpy="0 0 0"/>
+      <geometry>
+	<box size="${arm_len} ${arm_thick} ${arm_width}"/>
+      </geometry>
+      <material name="dark"/>
+    </visual>
+
+    <!--collision>
+      <origin xyz="${-arm_len*0.5} 0 0" rpy="0 0 0"/>
+      <geometry>
+	<box size="${arm_len} ${arm_thick} ${arm_width}"/>
+      </geometry>
+    </collision-->
+
+    <inertial>
+      <mass value="${default_mas}" />
+      <inertia ixx="1.1175580e-05" ixy="-4.2369783e-11" ixz="-5.9381719e-09"
+               iyy="1.1192413e-05" iyz="-1.4400107e-11"
+               izz="2.0712558e-05" />
+      </inertial>
+  </link>
+
+<!--*********cross bar********-->
+<joint name="right_arm_to_crossbar" type="revolute">
+    <parent link="right_arm"/>
+    <child link="crossbar"/>
+    <axis xyz="-1 0 0"/>
+    <limit effort="100.0" lower="0.0" upper="3.14" velocity="0.1"/>
+    <origin xyz="${-arm_len} 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="crossbar">
+    <visual>
+      <origin xyz="0 ${-arm_dist*0.5} 0" rpy="0 0 0"/>
+      <geometry>
+	<box size="${arm_thick} ${arm_dist + arm_width} ${arm_width}"/>
+      </geometry>
+      <material name="dark"/>
+    </visual>
+
+    <!--collision>
+      <origin xyz="0 ${-arm_dist*0.5} 0" rpy="0 0 0"/>
+      <geometry>
+	<box size="${arm_thick} ${arm_dist + arm_width} ${arm_width}"/>
+      </geometry>
+    </collision-->
+
+    <inertial>
+      <mass value="${default_mas}" />
+      <inertia ixx="1.1175580e-05" ixy="-4.2369783e-11" ixz="-5.9381719e-09"
+               iyy="1.1192413e-05" iyz="-1.4400107e-11"
+               izz="2.0712558e-05" />
+      </inertial>
+  </link>
+
+
+  <!-- ******** Hokuyo Laser on base******* -->
+<joint name="hokuyo_joint_base" type="fixed">
+    <axis xyz="0 1 0" />
+    <origin xyz="${-base_x*0.1} 0.0 ${base_z*0.5 + 0.04}" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="base_scan"/>
+  </joint>
+
+   <link name="base_scan">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://mybot_description/meshes/sensors/lds.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="dark"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0.015 0 -0.0065" rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="0.0315" radius="0.055"/>
+      </geometry>
+    </collision>
+
+    <inertial>
+      <mass value="0.114" />
+      <origin xyz="0 0 0" />
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
+               iyy="0.001" iyz="0.0"
+               izz="0.001" />
+    </inertial>
+  </link>
+
+
+ <!-- **********************camera *************** -->
+
+ <joint name="camera_joint" type="fixed">
+    <axis xyz="0 1 0" />
+    <origin xyz="${base_x*0.5 + camera_size*0.5} 0 0" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="camera"/>
+  </joint>
+
+ <link name="camera">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${camera_size} ${camera_size} ${camera_size}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${camera_size} ${camera_size} ${camera_size}"/>
+      </geometry>
+      <material name="green"/>
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 0" />
+      <mass value="${default_mas}" />
+      <inertia ixx="1.1175580e-05" ixy="-4.2369783e-11" ixz="-5.9381719e-09"
+               iyy="1.1192413e-05" iyz="-1.4400107e-11"
+               izz="2.0712558e-05" />
+      </inertial>
+  </link>
+
+  <!-- ******** Hokuyo Laser for back******* -->
+<joint name="hokuyo_joint_back" type="fixed">
+    <axis xyz="0 1 0" />
+    <origin xyz="${-base_x*0.6} 0.0 ${base_z*0.5 + 1.2}" rpy="0 0 3.14"/>
+    <parent link="base_link"/>
+    <child link="hokuyo_back"/>
+  </joint>
+
+  <link name="hokuyo_back">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+    <box size="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://mybot_description/meshes/hokuyo.dae"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+
+<!--********left wheel*******-->
+  <joint name="wheel_left_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="wheel_left_link"/>
+    <origin xyz="${wheel_from_base} ${base_y*0.5 + wheel_len*0.5} ${-base_z*0.4}" rpy="-1.57 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <link name="wheel_left_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="${wheel_len}" radius="${wheel_rad}"/>
+      </geometry>
+      <material name="dark"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="${wheel_len}" radius="${wheel_rad}"/>
+      </geometry>
+    </collision>
+
+    <inertial>
+      <origin xyz="0 0 0" />
+      <mass value="2.8498940e-02" />
+      <inertia ixx="1.1175580e-05" ixy="-4.2369783e-11" ixz="-5.9381719e-09"
+               iyy="1.1192413e-05" iyz="-1.4400107e-11"
+               izz="2.0712558e-05" />
+      </inertial>
+  </link>
+
+<!--********right wheel*******-->
+  <joint name="wheel_right_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="wheel_right_link"/>
+    <origin xyz="${wheel_from_base} -${base_y*0.5 + wheel_len*0.5} ${-base_z*0.4}" rpy="-1.57 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <link name="wheel_right_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+            <cylinder length="${wheel_len}" radius="${wheel_rad}"/>
+      </geometry>
+      <material name="dark"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="${wheel_len}" radius="${wheel_rad}"/>
+      </geometry>
+    </collision>
+
+    <inertial>
+      <origin xyz="0 0 0" />
+      <mass value="2.8498940e-02" />
+      <inertia ixx="1.1175580e-05" ixy="-4.2369783e-11" ixz="-5.9381719e-09"
+               iyy="1.1192413e-05" iyz="-1.4400107e-11"
+               izz="2.0712558e-05" />
+      </inertial>
+  </link>
+
+  
+<!--********castors*******-->
+<joint name="caster_back_right_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="caster_back_right_link"/>
+    <origin xyz="${-base_x*0.4} ${-base_y*0.3} ${-base_z*0.5 - castor_height*0.5}" rpy="-1.57 1.57 0"/>
+  </joint>
+
+
+  <link name="caster_back_right_link">
+ <visual>
+      <origin xyz="0 0.001 0" rpy="0 0 0"/>
+      <geometry>
+	<box size="0.030 0.009 ${castor_height}"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0.001 0" rpy="0 0 0"/>
+      <geometry>
+	<box size="0.030 0.009 ${castor_height}"/>
+      </geometry>
+    </collision>
+
+    <inertial>
+      <origin xyz="0 0 0" />
+      <mass value="0.005" />
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
+               iyy="0.001" iyz="0.0"
+               izz="0.001" />
+    </inertial>
+  </link>
+
+  <joint name="caster_back_left_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="caster_back_left_link"/>
+    <origin xyz="${-base_x*0.4} ${base_y*0.3} ${-base_z*0.5 - castor_height*0.5} " rpy="-1.57 1.57 0"/>
+  </joint>
+
+  <link name="caster_back_left_link">
+     <visual>
+      <origin xyz="0 0.001 0" rpy="0 0 0"/>
+      <geometry>
+	<box size="0.030 0.009 ${castor_height}"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0.001 0" rpy="0 0 0"/>
+      <geometry>
+	<box size="0.030 0.009 ${castor_height}"/>
+      </geometry>
+    </collision>
+
+    <inertial>
+      <origin xyz="0 0 0" />
+      <mass value="0.005" />
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
+               iyy="0.001" iyz="0.0"
+               izz="0.001" />
+    </inertial>
+  </link>
+
+
+ <joint name="imu_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="imu_link"/>
+    <origin xyz="0.0 0 0.068" rpy="0 0 0"/>
+  </joint>
+
+  <link name="imu_link"/>
+
+
+
+<gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/mybot</robotNamespace>
+ 	<legacyModeNS>1</legacyModeNS> 
+    <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+    </plugin>
+  </gazebo>
+
+</robot>
+
+
+
+
+
+
+

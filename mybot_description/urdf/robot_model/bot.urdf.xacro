@@ -4,8 +4,8 @@
   <xacro:include filename="$(find mybot_description)/urdf/robot_model/bot.gazebo.xacro"/>
 
   <xacro:property name="base_mass" value= "6" />
-  <xacro:property name="wheel_mass" value= "0.05" />
-  <xacro:property name="default_mass" value= "0.01" />
+  <xacro:property name="wheel_mass" value= "0.01" />
+  <xacro:property name="default_mass" value= "0.0001" />
 
 
    <xacro:property name="base_x" value= "0.6" />
@@ -131,7 +131,7 @@
     <parent link="arm_base"/>
     <child link="slider"/>
     <axis xyz="0 0 1"/>
-    <limit effort="100000.0" lower="${-slider_z}" upper="0" velocity="0.5"/>
+    <limit effort="1000.0" lower="${-slider_z}" upper="0" velocity="0.5"/>
     <origin xyz="${arm_base_x*0.5 + slider_z} ${arm_base_y*0.5 + arm_y*0.5} 0" rpy="0 1.57 0"/>
   </joint>
 
@@ -163,7 +163,7 @@
 <transmission name="slider_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <actuator name="slider_motor">
-      <mechanicalReduction>50</mechanicalReduction>
+      <mechanicalReduction>1</mechanicalReduction>
     <hardwareInterface>EffortJointInterface</hardwareInterface>
     </actuator>
     <joint name="arm_base_to_slider">
@@ -176,7 +176,7 @@
     <parent link="slider"/>
     <child link="arm"/>
     <axis xyz="0 1 0"/>
-    <limit effort="1000.0" lower="0.0" upper="1.57" velocity="0.5"/>
+    <limit effort="1000.0" lower="0.0" upper="1.57" velocity="0.1"/>
     <origin xyz="0 0 0" rpy="0 -1.57 0"/>
   </joint>
 

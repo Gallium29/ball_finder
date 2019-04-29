@@ -589,10 +589,10 @@
       <static>1</static>
     </model>
     <state world_name='default'>
-      <sim_time>223 489000000</sim_time>
-      <real_time>124 918674682</real_time>
-      <wall_time>1555418069 973484407</wall_time>
-      <iterations>124073</iterations>
+      <sim_time>542 92000000</sim_time>
+      <real_time>319 168864525</real_time>
+      <wall_time>1556499865 17168233</wall_time>
+      <iterations>318603</iterations>
       <model name='area'>
         <pose frame=''>-9.49126 7.19124 0.005 0 -0 0.000551</pose>
         <scale>1 1 1</scale>
@@ -690,13 +690,13 @@
         </link>
       </model>
       <model name='redball'>
-        <pose frame=''>5 7 0.21 0 -0 0</pose>
+        <pose frame=''>5 7 0.201 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='link_0'>
-          <pose frame=''>5 7 0.21 0 -0 0</pose>
+          <pose frame=''>5 7 0.201 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 -9.8 0 -0 0</acceleration>
-          <wrench>0 0 -9.8 0 -0 0</wrench>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <light name='sun'>
@@ -705,7 +705,7 @@
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose frame=''>5.81176 10.6403 36.2834 0.001122 1.45024 -3.12945</pose>
+        <pose frame=''>17.7867 13.8177 15.762 0 0.71424 -2.98945</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
@@ -714,7 +714,7 @@
       <link name='link_0'>
         <pose frame=''>0 0 0 0 -0 0</pose>
         <inertial>
-          <mass>1</mass>
+          <mass>0.1</mass>
           <inertia>
             <ixx>0.1</ixx>
             <ixy>0</ixy>
@@ -727,7 +727,7 @@
         </inertial>
         <gravity>1</gravity>
         <self_collide>0</self_collide>
-        <kinematic>1</kinematic>
+        <kinematic>0</kinematic>
         <visual name='visual'>
           <pose frame=''>0 0 0 0 -0 0</pose>
           <geometry>

@@ -96,20 +96,10 @@
       <heading_deg>0</heading_deg>
     </spherical_coordinates>
     <state world_name='default'>
-      <sim_time>9 982000000</sim_time>
-      <real_time>10 19603197</real_time>
-      <wall_time>1555786752 438006995</wall_time>
-      <iterations>9982</iterations>
-      <model name='ball'>
-        <pose frame=''>0 0 0.2 0 -0 0</pose>
-        <scale>1 1 1</scale>
-        <link name='link'>
-          <pose frame=''>0 0 0.2 0 -0 0</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 0 0 -0 0</acceleration>
-          <wrench>0 0 0 0 -0 0</wrench>
-        </link>
-      </model>
+      <sim_time>10 281000000</sim_time>
+      <real_time>10 339691680</real_time>
+      <wall_time>1556497290 432982081</wall_time>
+      <iterations>10281</iterations>
       <model name='ground_plane'>
         <pose frame=''>0 0 0 0 -0 0</pose>
         <scale>1 1 1</scale>
@@ -120,15 +110,25 @@
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
+      <model name='unit_sphere_0_0'>
+        <pose frame=''>0.409123 0.228805 0.5 0 -0 0</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>0.409123 0.228805 0.5 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
       <light name='sun'>
         <pose frame=''>0 0 10 0 -0 0</pose>
       </light>
     </state>
-    <model name='ball'>
+    <model name='unit_sphere_0_0'>
       <link name='link'>
         <pose frame=''>0 0 0 0 -0 0</pose>
         <inertial>
-          <mass>1</mass>
+          <mass>0.1</mass>
           <inertia>
             <ixx>0.1</ixx>
             <ixy>0</ixy>
@@ -223,11 +223,11 @@
       </link>
       <static>0</static>
       <allow_auto_disable>1</allow_auto_disable>
-      <pose frame=''>0.654802 -0.308647 0.5 0 -0 0</pose>
+      <pose frame=''>0.409123 0.228805 0.5 0 -0 0</pose>
     </model>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose frame=''>-0.581842 -3.67293 0.747632 0 0.11535 1.20776</pose>
+        <pose frame=''>2.03875 -1.53843 1.84461 5e-05 0.560912 2.29164</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>

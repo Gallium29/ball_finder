@@ -10,7 +10,7 @@
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
    <!--<arg name="world_name" value="$(find mybot_description)/worlds/ball.world"/>-->
-    <arg name="world_name" value="$(find mybot_gazebo)/worlds/challenge-world-test-redballaroundcorner"/>
+    <arg name="world_name" value="$(find mybot_gazebo)/worlds/challenge-world-test-redballeasy"/>
     <arg name="paused" value="false"/>
     <arg name="use_sim_time" value="true"/>
     <arg name="gui" value="true"/>
@@ -18,7 +18,7 @@
     <arg name="debug" value="false"/>
   </include>
 
-<arg name="model" default="$(find mybot_description)/urdf/robot_model/bot.urdf.xacro"/>
+<arg name="model" default="$(find mybot_description)/urdf/turtlebot/turtlebot3_waffle.urdf.xacro"/>
   <arg name="x_pos" default="0.05"/>
   <arg name="y_pos" default="6.5"/>
   <arg name="z_pos" default="0.5"/>
@@ -30,9 +30,7 @@
   <rosparam file="$(find mybot_description)/config/control.yaml" command="load"/>
 
  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen" ns="/mybot" args="slider_position_controller
-					arm_position_controller
-					holder_position_controller
+    output="screen" ns="/mybot" args="crossbar_position_controller
 					 joint_state_controller"/>
 
   <!-- convert joint states to TF transforms for rviz, etc -->
