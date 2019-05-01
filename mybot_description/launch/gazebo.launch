@@ -21,8 +21,9 @@
 
  <rosparam file="$(find mybot_description)/config/control.yaml" command="load"/>
 
- <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
     output="screen" ns="/mybot" args="crossbar_position_controller
+				      arm_position_controller
 					 joint_state_controller"/>
 
   <!-- convert joint states to TF transforms for rviz, etc -->

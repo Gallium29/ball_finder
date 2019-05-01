@@ -10,3 +10,11 @@ mybot:
     joint: right_arm_to_crossbar
     pid: {p: 0.0005, i: 0.008, d: 0.003}
 
+
+  # Position Controllers ---------------------------------------
+  arm_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: base_to_right_arm
+    pid: {p: 5, i: 0.008, d: 1}
+
+

@@ -16,12 +16,14 @@ min_dist_wall = 1.5
 
 class Navigator():
     def __init__(self):
+	print("in init!")
         self.cmd_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
         self.delta_angle_sub = rospy.Subscriber('/mybot/delta_angle', Float64, self.delta_angle_callback)
         self.radius_sub = rospy.Subscriber('/mybot/radius', Float64, self.radius_callback)
         self.see_red_sub = rospy.Subscriber('/mybot/see_red', Bool, self.see_red_callback)
         self.scan_sub = rospy.Subscriber('/scan', LaserScan, self.scan_callback)
         self.crossbar_publisher = rospy.Publisher('/mybot/crossbar_position_controller/command', Float64, queue_size=10)
+	self.arm_publisher = rospy.Publisher('/mybot/arm_position_controller/command', Float64, queue_size=10)
 
         self.status = "init"
         self.substatus = "unknown"
@@ -38,6 +40,7 @@ class Navigator():
                 'fleft': float('Inf'),
                 'left': float('Inf')
         }
+	rospy.sleep(1.0)
         self.navigate()
 
     def see_red_callback(self, data):
@@ -93,6 +96,7 @@ class Navigator():
         
     def lift_crossbar(self):
         self.crossbar_publisher.publish(3.14)
+	self.arm_publisher.publish(-0.28)
         rospy.sleep(1)
         self.status = "acquiring_ball"
     def lower_crossbar(self):
@@ -227,7 +231,7 @@ class Navigator():
     def navigate(self):
         rate = rospy.Rate(200)
         while not rospy.is_shutdown():
-            #print(self.status)
+            print(self.status)
             if self.status == "init":
                 self.init()
             elif self.status == "searching":

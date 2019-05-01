@@ -190,11 +190,12 @@
 
 
 <!-- ********right arm***********-->
-<joint name="base_to_right_arm" type="fixed">
+<joint name="base_to_right_arm" type="prismatic">
     <parent link="base_link"/>
     <child link="right_arm"/>
-    <origin xyz="${-0.15} ${arm_dist*0.5} ${arm_mount_height}" rpy="0 0 0"/>
-    <axis xyz="0 0 1"/>
+    <origin xyz="${0.08} ${arm_dist*0.5} ${arm_mount_height}" rpy="0 0 0"/>
+     <axis xyz="1 0 0"/>
+    <limit effort="100.0" lower="-0.28" upper="0.0" velocity="0.1"/>
   </joint>
 
   <link name="right_arm">
@@ -223,9 +224,9 @@
 
 <!--********left arm*******-->
 <joint name="base_to_left_arm" type="fixed">
-    <parent link="base_link"/>
+    <parent link="right_arm"/>
     <child link="left_arm"/>
-    <origin xyz="${-0.15} ${-arm_dist*0.5} ${arm_mount_height}" rpy="0 0 0"/>
+    <origin xyz="0.0 ${-arm_dist} 0.0" rpy="0 0 0"/>
     <axis xyz="0 0 1"/>
   </joint>
 
@@ -329,6 +330,17 @@
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
     <joint name="right_arm_to_crossbar">
+    <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+
+<transmission name="arm_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="arm_motor">
+    <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="base_to_right_arm">
     <hardwareInterface>EffortJointInterface</hardwareInterface>
     </joint>
   </transmission>
