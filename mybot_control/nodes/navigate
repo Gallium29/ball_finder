@@ -273,7 +273,7 @@ class Navigator():
         try:
             for i in range(l):
                 angle = 360.0/l*i -90
-                if((angle < min_angle)or(angle > max_angle)):
+                if((angle < min_angle) or (angle > max_angle)):
                     continue
                 dist_c = np.mean(ar[i-inc:i+inc])
                 if(not (dist_c < 10)):
