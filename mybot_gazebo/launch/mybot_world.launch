@@ -43,6 +43,45 @@
 
   <!--<node pkg="mybot_description" name="ball_control" type="ball_control.py" output = 'screen'/>-->
 
+ <!-- ******** Navigation stuff****** -->
+
+  <!-- Below are configurations of the navigation stack -->
+
+  <!-- Map server -->
+  <node name="map_server" pkg="map_server" type="map_server" args="/home/sleek_eagle/research/ros/project/src/maps/challenge_map.yaml">
+  </node>
+
+
+  <!-- AMCL -->
+    <include file="$(find amcl)/examples/amcl_omni.launch" />
+
+
+  <!-- move_base -->
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base">
+
+
+    <rosparam file="$(find mybot_nav)/param/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find mybot_nav)/param/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find mybot_nav)/param/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find mybot_nav)/param/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find mybot_nav)/param/base_local_planner_params.yaml" command="load" />
+
+  </node>
+
+
+<!--*********** controller part******-->
+
+ <node pkg="mybot_control"
+   		 name="detect_red_ball" 
+         type="detect_red_ball"
+         required="true" 
+         output="screen" />
+
+   <node pkg="mybot_control"
+         name="navigate" 
+         type="navigate"
+         required="true" 
+         output="screen" />
 
 
   

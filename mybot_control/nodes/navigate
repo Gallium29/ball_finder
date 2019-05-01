@@ -10,6 +10,7 @@ from sensor_msgs.msg import LaserScan
 from math import fabs
 import numpy as np
 import math
+from geometry_msgs.msg import PoseStamped
 
 min_dist_ball = 0.8
 min_dist_wall = 0.7
@@ -24,6 +25,8 @@ class Navigator():
         self.scan_sub = rospy.Subscriber('/scan', LaserScan, self.scan_callback)
         self.crossbar_publisher = rospy.Publisher('/mybot/crossbar_position_controller/command', Float64, queue_size=10)
 	self.arm_publisher = rospy.Publisher('/mybot/arm_position_controller/command', Float64, queue_size=10)
+
+	self.goal_publisher = rospy.Publisher("move_base_simple/goal", PoseStamped, queue_size=5)
 
         self.status = "init"
         self.substatus = "unknown"
@@ -102,7 +105,7 @@ class Navigator():
     def lower_crossbar(self):
         self.crossbar_publisher.publish(0.0)
         rospy.sleep(1)
-	print("done")
+	self.status = "retrieving"
 
 
     def change_status(self, input_status, info=None):
@@ -221,7 +224,24 @@ class Navigator():
 
 
     def retrieve(self):
-        pass
+	print("in retrieve!!!!!")
+        goal = PoseStamped()
+
+	goal.header.seq = 1
+	goal.header.stamp = rospy.Time.now()
+	goal.header.frame_id = "map"
+
+	goal.pose.position.x = 0.39499989152
+	goal.pose.position.y = 0.0
+	goal.pose.position.z = 0.0
+
+	goal.pose.orientation.x = 0.0
+	goal.pose.orientation.y = 0.0
+	goal.pose.orientation.z = 0.0024251765401
+	goal.pose.orientation.w = 0.999991023365
+
+	self.goal_publisher.publish(goal)
+	self.status = "nothing"
 
     def move_to_src(self):
         pass
