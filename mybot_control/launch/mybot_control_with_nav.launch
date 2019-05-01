@@ -4,7 +4,7 @@
   <!-- Below are configurations of the navigation stack -->
 
   <!-- Map server -->
-  <node name="map_server" pkg="map_server" type="map_server" args="$(find mybot_control)/maps/map.yaml">
+  <node name="map_server" pkg="map_server" type="map_server" args="/home/sleek_eagle/research/ros/project/src/maps/challenge_map.yaml">
   </node>
 
 
@@ -23,5 +23,12 @@
     <rosparam file="$(find mybot_nav)/param/base_local_planner_params.yaml" command="load" />
 
   </node>
+
+  <arg name="open_rviz" default="true"/>
+<!-- rviz -->
+  <group if="$(arg open_rviz)"> 
+    <node pkg="rviz" type="rviz" name="rviz" required="true"
+          args="-d $(find turtlebot3_navigation)/rviz/turtlebot3_navigation.rviz"/>
+  </group>
 
 </launch>

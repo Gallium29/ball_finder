@@ -10,7 +10,7 @@
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
    <!--<arg name="world_name" value="$(find mybot_description)/worlds/ball.world"/>-->
-    <arg name="world_name" value="$(find mybot_gazebo)/worlds/challenge-world-test-redballeasy"/>
+    <arg name="world_name" value="$(find mybot_gazebo)/worlds/challenge-world-t1"/>
     <arg name="paused" value="false"/>
     <arg name="use_sim_time" value="true"/>
     <arg name="gui" value="true"/>
@@ -19,8 +19,8 @@
   </include>
 
 <arg name="model" default="$(find mybot_description)/urdf/turtlebot/turtlebot3_waffle.urdf.xacro"/>
-  <arg name="x_pos" default="0.05"/>
-  <arg name="y_pos" default="6.5"/>
+  <arg name="x_pos" default="-2.51"/>
+  <arg name="y_pos" default="3.39"/>
   <arg name="z_pos" default="0.5"/>
 
   <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg model)" />

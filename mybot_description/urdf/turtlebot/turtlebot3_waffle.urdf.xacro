@@ -5,10 +5,10 @@
 
 
    <xacro:property name="arm_mount_height" value="0.1" />
-   <xacro:property name="arm_len" value="0.6" />
+   <xacro:property name="arm_len" value="0.3" />
    <xacro:property name="arm_width" value="0.02" />
    <xacro:property name="arm_thick" value="0.01" />
-   <xacro:property name="arm_dist" value="0.5" />
+   <xacro:property name="arm_dist" value="0.3" />
    <xacro:property name="camera_size" value="${arm_width*0.8}"/>
    <xacro:property name="default_mas" value="0.005" />
 
