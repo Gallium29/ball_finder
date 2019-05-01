@@ -159,7 +159,10 @@ class Navigator():
         print("in movet otred!!!")
         ang_error = self.delta_angle
         print(ang_error)
-        while(abs(ang_error) > 0.1):
+	dist = 10.0
+	angle_limit = 30/180.0*3.14
+	angle_error = angle_limit+100
+        while(dist > 1.5):
             ret = None
             try:
                 ret = self.get_ball_angle_dist(-10,10)
@@ -168,8 +171,8 @@ class Navigator():
             if(not (ret == None)):
                 ang = ret[0]
                 dist = ret[1]
-                if(dist < 3.0):
-                    break
+	    print("dist = "  +str(dist))
+	    print("ang = " + str(ang_error))
             k_ang = 0.05
             ang_error = self.delta_angle
             ang_vel = math.atan(ang_error/1.0)*k_ang
@@ -224,7 +227,7 @@ class Navigator():
     def navigate(self):
         rate = rospy.Rate(200)
         while not rospy.is_shutdown():
-            print(self.status)
+            #print(self.status)
             if self.status == "init":
                 self.init()
             elif self.status == "searching":
@@ -246,7 +249,8 @@ class Navigator():
             elif self.status == "terminated":
                 self.terminate()
             else:
-                print("unknown status")
+		pass
+                #print("unknown status")
             rate.sleep()
     
     def get_simple_angle(self,alpha):
@@ -278,7 +282,7 @@ class Navigator():
                 dist_c = np.mean(ar[i-inc:i+inc])
                 if(not (dist_c < 10)):
                     continue
-                theta = math.atan(0.2/(0.2+dist_c))
+                theta = math.atan(0.1/(0.1+dist_c))
                 itr = int(abs(theta/self.scan.angle_increment)) + 10
                 half_itr = int(itr/2.0)
                 dist_b = np.mean(ar[i-half_itr-inc:i-half_itr+inc])
@@ -300,7 +304,7 @@ class Navigator():
                 if(dist_c < 10.0):
                     if((dist_b - dist_c < 0.06) and (dist_d-dist_c < 0.06)):
                         #print((dist_c+0.2)/math.cos(theta))
-                        val = (dist_c+0.2)/math.cos(theta)*0.9
+                        val = (dist_c+0.1)/math.cos(theta)*0.9
                         if(((dist_a - dist_c)>val) and (dist_e-dist_c)>val):
                             ang = self.scan.angle_min + i*self.scan.angle_increment
                             dist = dist_c
@@ -320,12 +324,12 @@ class Navigator():
         if(not (ret == None)):
             ang = ret[0]
             dist = ret[1]
-            if(dist < 0.25):
+            if(dist < 0.2):
                 self.command_bot(0,0,0,0,0,0)
                 print("dist = " + str(dist))
                 self.status = "lowering_bar"
                 return
-            print("ang = " + str(self.get_simple_angle(ang)/3.14*180))
+            #print("ang = " + str(self.get_simple_angle(ang)/3.14*180))
             ang = self.get_simple_angle(ang) + 3.25 #not 3.14 to avoid systematic error
             ang_vel = self.K_angle*self.get_simple_angle(ang)
             #print("angle = " + str(self.get_simple_angle(ang)))
