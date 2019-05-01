@@ -98,11 +98,11 @@ class Navigator():
         self.crossbar_publisher.publish(3.14)
 	self.arm_publisher.publish(-0.28)
         rospy.sleep(1)
-        self.status = "acquiring_ball"
+
     def lower_crossbar(self):
         self.crossbar_publisher.publish(0.0)
         rospy.sleep(1)
-        self.status = "retrieving"
+	print("done")
 
 
     def change_status(self, input_status, info=None):
@@ -122,6 +122,7 @@ class Navigator():
             self.change_status("searching")
 
     def search(self):
+	self.lifted=False
         if self.see_red:
             print "see red"
             self.change_status("moving_to_red")
@@ -184,7 +185,7 @@ class Navigator():
             self.command_bot(lin_vel, 0, 0, 0, 0, ang_vel)
             rospy.sleep(0.05)
         self.command_bot(0, 0, 0, 0, 0, 0)
-        self.status = "lifting_bar"
+        self.status = "acquiring_ball"
  
 
         
@@ -231,7 +232,7 @@ class Navigator():
     def navigate(self):
         rate = rospy.Rate(200)
         while not rospy.is_shutdown():
-            print(self.status)
+            #print(self.status)
             if self.status == "init":
                 self.init()
             elif self.status == "searching":
@@ -323,6 +324,7 @@ class Navigator():
     K_angle = 0.5
     K_lin = 0.1
     final_dist = 0.05
+    lifted = False
     def acquire_ball(self):
         ret = self.get_ball_angle_dist(-90,90*3)
         if(not (ret == None)):
@@ -331,8 +333,8 @@ class Navigator():
             if(dist < 0.2):
                 self.command_bot(0,0,0,0,0,0)
                 print("dist = " + str(dist))
-                self.status = "lowering_bar"
-                return
+                self.lower_crossbar()
+         
             #print("ang = " + str(self.get_simple_angle(ang)/3.14*180))
             ang = self.get_simple_angle(ang) + 3.25 #not 3.14 to avoid systematic error
             ang_vel = self.K_angle*self.get_simple_angle(ang)
@@ -342,6 +344,10 @@ class Navigator():
             dist_error = dist - self.final_dist
             if(abs(self.get_simple_angle(ang)) < 10.0/180.0*3.14):
                 lin_vel = -self.K_lin*dist_error
+		if(not self.lifted):
+			print("here")
+			self.lift_crossbar()
+			self.lifted = True
             else:
                 lin_vel = 0.0
             self.command_bot(lin_vel,0,0,0,0,ang_vel)
