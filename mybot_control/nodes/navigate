@@ -12,7 +12,7 @@ import numpy as np
 import math
 
 min_dist_ball = 0.8
-min_dist_wall = 1.5
+min_dist_wall = 0.7
 
 class Navigator():
     def __init__(self):
@@ -140,7 +140,7 @@ class Navigator():
                 print("unknown sub status under searching")
 
     def forward_search(self):
-        self.command_bot(0.5, 0, 0, 0, 0, 0)
+        self.command_bot(0.3, 0, 0, 0, 0, 0)
 
     def turn_left_search(self):
         self.command_bot(0, 0, 0, 0, 0, 0.5)
@@ -149,10 +149,10 @@ class Navigator():
         self.command_bot(0, 0, 0, 0, 0, -0.5)
 
     def follow_search(self):
-        self.command_bot(0.5, 0, 0, 0, 0, 0.07)
+        self.command_bot(0.3, 0, 0, 0, 0, 0.07)
 
     def grope_convex_corner_search(self):
-        self.command_bot(0.5, 0, 0, 0, 0, -0.3)
+        self.command_bot(0.3, 0, 0, 0, 0, -0.4)
                 
     
     def move_to_red(self):
