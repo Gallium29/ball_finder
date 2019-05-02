@@ -10,7 +10,7 @@
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
    <!--<arg name="world_name" value="$(find mybot_description)/worlds/ball.world"/>-->
-    <arg name="world_name" value="$(find mybot_gazebo)/worlds/challenge-world-t1"/>
+    <arg name="world_name" value="$(find mybot_gazebo)/worlds/challenge-world-t5"/>
     <arg name="paused" value="false"/>
     <arg name="use_sim_time" value="true"/>
     <arg name="gui" value="true"/>
@@ -41,11 +41,21 @@
   </node>
 
 
-  <!--<node pkg="mybot_description" name="ball_control" type="ball_control.py" output = 'screen'/>-->
+   <node pkg="mybot_control"
+   		 name="detect_red_ball" 
+         type="detect_red_ball"
+         required="true" 
+         output="screen" />
 
- <!-- ******** Navigation stuff****** -->
-
-  <!-- Below are configurations of the navigation stack -->
+   <node pkg="mybot_control"
+         name="navigate" 
+         type="navigate"
+         required="true" 
+         output="screen" />
+  
+  
+<!--****navigating back****-->
+ <!-- Below are configurations of the navigation stack -->
 
   <!-- Map server -->
   <node name="map_server" pkg="map_server" type="map_server" args="/home/sleek_eagle/research/ros/project/src/maps/challenge_map.yaml">
@@ -67,24 +77,6 @@
     <rosparam file="$(find mybot_nav)/param/base_local_planner_params.yaml" command="load" />
 
   </node>
-
-
-<!--*********** controller part******-->
-
- <node pkg="mybot_control"
-   		 name="detect_red_ball" 
-         type="detect_red_ball"
-         required="true" 
-         output="screen" />
-
-   <node pkg="mybot_control"
-         name="navigate" 
-         type="navigate"
-         required="true" 
-         output="screen" />
-
-
-  
 
 
 </launch>
