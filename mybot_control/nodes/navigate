@@ -202,8 +202,6 @@ class Navigator():
             if(not (ret == None)):
                 ang = ret[0]
                 dist = ret[1]
-	    print("dist = "  +str(dist))
-	    print("ang = " + str(ang_error))
             k_ang = 0.05
             ang_error = self.delta_angle
             ang_vel = math.atan(ang_error/1.0)*k_ang
@@ -386,14 +384,12 @@ class Navigator():
     final_dist = 0.05
     lifted = False
     def acquire_ball(self):
-	print("in aquire**********")
         ret = self.get_ball_angle_dist(-90,90*3)
         if(not (ret == None)):
             ang = ret[0]
             dist = ret[1]
             if(dist < 0.2):
                 self.command_bot(0,0,0,0,0,0)
-                print("dist = " + str(dist))
                 self.lower_crossbar()
          
             #print("ang = " + str(self.get_simple_angle(ang)/3.14*180))
@@ -406,7 +402,6 @@ class Navigator():
             if(abs(self.get_simple_angle(ang)) < 10.0/180.0*3.14):
                 lin_vel = -self.K_lin*dist_error
 		if(not self.lifted):
-			print("here")
 			self.lift_crossbar()
 			self.lifted = True
             else:
