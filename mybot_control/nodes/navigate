@@ -196,7 +196,7 @@ class Navigator():
         while(dist > 1.5):
             ret = None
             try:
-                ret = self.get_ball_angle_dist(-10,10)
+                ret = self.get_ball_angle_dist(-30,30)
             except Exception as error: 
                 print(error)
             if(not (ret == None)):
