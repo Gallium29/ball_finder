@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+  
+<!--<param name="robot_description" command="$(find xacro)/xacro.py '$(find mybot_description)/urdf/mybot.xacro'"/>-->
+
+ <!-- <node name="mybot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
+   args="-urdf -param robot_description -model mybot" />-->
+
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+   <!--<arg name="world_name" value="$(find mybot_description)/worlds/ball.world"/>-->
+    <arg name="world_name" value="$(find mybot_gazebo)/worlds/challenge-world-t3"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+
+<arg name="model" default="$(find mybot_description)/urdf/turtlebot/turtlebot3_waffle.urdf.xacro"/>
+  <arg name="x_pos" default="-2.51"/>
+  <arg name="y_pos" default="3.39"/>
+  <arg name="z_pos" default="0.5"/>
+
+  <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg model)" />
+
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf" args="-urdf -model robot -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos) -param robot_description" />
+
+  <rosparam file="$(find mybot_description)/config/control.yaml" command="load"/>
+
+ <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen" ns="/mybot" args="crossbar_position_controller
+				      arm_position_controller
+					 joint_state_controller"/>
+
+  <!-- convert joint states to TF transforms for rviz, etc -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+    respawn="false" output="screen">
+    <remap from="/joint_states" to="/mybot/joint_states" />
+  </node>
+
+
+   <node pkg="mybot_control"
+   		 name="detect_red_ball" 
+         type="detect_red_ball"
+         required="true" 
+         output="screen" />
+
+   <node pkg="mybot_control"
+         name="navigate" 
+         type="navigate"
+         required="true" 
+         output="screen" />
+  
+  
+<!--****navigating back****-->
+ <!-- Below are configurations of the navigation stack -->
+
+  <!-- Map server -->
+  <node name="map_server" pkg="map_server" type="map_server" args="/home/sleek_eagle/research/ros/project/src/maps/challenge_map.yaml">
+  </node>
+
+
+  <!-- AMCL -->
+    <include file="$(find amcl)/examples/amcl_omni.launch" />
+
+
+  <!-- move_base -->
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base">
+
+
+    <rosparam file="$(find mybot_nav)/param/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find mybot_nav)/param/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find mybot_nav)/param/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find mybot_nav)/param/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find mybot_nav)/param/base_local_planner_params.yaml" command="load" />
+
+  </node>
+
+
+</launch>
