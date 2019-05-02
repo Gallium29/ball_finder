@@ -1,4 +1,4 @@
-image: /home/sleek_eagle/research/ros/project/src/maps/mod_map.pgm
+image: mod_map.pgm
 resolution: 0.050000
 origin: [-6.700000, -13.0, 0.000000]
 negate: 0
